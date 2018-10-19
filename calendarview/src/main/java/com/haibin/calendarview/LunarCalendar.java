@@ -238,15 +238,15 @@ final class LunarCalendar {
      */
     private static String getLunarText(int year, int month, int day) {
         String termText = LunarCalendar.getSolarTerm(year, month, day);
-        String solar = LunarCalendar.gregorianFestival(month, day);
-        if (!TextUtils.isEmpty(solar))
-            return solar;
+//        String solar = LunarCalendar.gregorianFestival(month, day);
+//        if (!TextUtils.isEmpty(solar))
+//            return solar;
         if (!TextUtils.isEmpty(termText))
             return termText;
         int[] lunar = LunarUtil.solarToLunar(year, month, day);
-        String festival = getTraditionFestival(lunar[0], lunar[1], lunar[2]);
-        if (!TextUtils.isEmpty(festival))
-            return festival;
+//        String festival = getTraditionFestival(lunar[0], lunar[1], lunar[2]);
+//        if (!TextUtils.isEmpty(festival))
+//            return festival;
         return LunarCalendar.numToChinese(lunar[1], lunar[2], lunar[3]);
     }
 
@@ -345,21 +345,23 @@ final class LunarCalendar {
             lunarCalendar.setLeapMonth(lunar[1]);
         }
         String solarTerm = LunarCalendar.getSolarTerm(year, month, day);
-        String gregorian = LunarCalendar.gregorianFestival(month, day);
+//        String gregorian = LunarCalendar.gregorianFestival(month, day);
         String festival = getTraditionFestival(lunar[0], lunar[1], lunar[2]);
-        if (TextUtils.isEmpty(gregorian)) {
-            gregorian = getSpecialFestival(year, month, day);
-        }
+//        if (TextUtils.isEmpty(gregorian)) {
+//            gregorian = getSpecialFestival(year, month, day);
+//        }
         calendar.setSolarTerm(solarTerm);
-        calendar.setGregorianFestival(gregorian);
+//        calendar.setGregorianFestival(gregorian);
         calendar.setTraditionFestival(festival);
         lunarCalendar.setTraditionFestival(festival);
         lunarCalendar.setSolarTerm(solarTerm);
         if (!TextUtils.isEmpty(solarTerm)) {
             calendar.setLunar(solarTerm);
-        } else if (!TextUtils.isEmpty(gregorian)) {
-            calendar.setLunar(gregorian);
-        } else if (!TextUtils.isEmpty(festival)) {
+        }
+//        else if (!TextUtils.isEmpty(gregorian)) {
+//            calendar.setLunar(gregorian);
+//        }
+        else if (!TextUtils.isEmpty(festival)) {
             calendar.setLunar(festival);
         } else {
             calendar.setLunar(LunarCalendar.numToChinese(lunar[1], lunar[2], lunar[3]));
