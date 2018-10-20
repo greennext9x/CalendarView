@@ -2,9 +2,9 @@
     <string name="cv_app_name">CalendarView</string>
     <string-array name="lunar_first_of_month">
         <item>1/1</item>
-        <item><![CDATA[&#189;]]></item>
-        <item><![CDATA[&#8531;]]></item>
-        <item><![CDATA[&#188;]]></item>
+        <item>1/2</item>
+        <item>1/3</item>
+        <item>1/4</item>
         <item>1/5</item>
         <item>1/6</item>
         <item>1/7</item>

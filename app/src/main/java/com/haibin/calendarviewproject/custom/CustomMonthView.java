@@ -85,7 +85,7 @@ public class CustomMonthView extends MonthView {
         mPointPaint.setTextAlign(Paint.Align.CENTER);
         mPointPaint.setColor(Color.RED);
 
-        mCircleRadius = dipToPx(getContext(), 7);
+        mCircleRadius = dipToPx(getContext(), 4);
 
         mPadding = dipToPx(getContext(), 3);
 

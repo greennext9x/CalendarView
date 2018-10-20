@@ -31,9 +31,7 @@ final class LunarCalendar {
         }
         SolarTermUtil.init(context);
         MONTH_STR = context.getResources().getStringArray(R.array.lunar_first_of_month);
-        TRADITION_FESTIVAL_STR = context.getResources().getStringArray(R.array.tradition_festival);
         DAY_STR = context.getResources().getStringArray(R.array.lunar_str);
-        SPECIAL_FESTIVAL_STR = context.getResources().getStringArray(R.array.special_festivals);
         SOLAR_CALENDAR = context.getResources().getStringArray(R.array.solar_festival);
     }
 
@@ -43,25 +41,9 @@ final class LunarCalendar {
     private static String[] MONTH_STR = null;
 
     /**
-     * 传统农历节日
-     */
-    private static String[] TRADITION_FESTIVAL_STR = null;
-
-    /**
      * 农历大写
      */
     private static String[] DAY_STR = null;
-
-    /**
-     * 特殊节日的数组
-     */
-    private static String[] SPECIAL_FESTIVAL_STR = null;
-
-    /**
-     * 特殊节日、母亲节和父亲节,感恩节等
-     */
-    @SuppressLint("UseSparseArrays")
-    private static final Map<Integer, String[]> SPECIAL_FESTIVAL = new HashMap<>();
 
     /**
      * 公历节日
@@ -73,32 +55,6 @@ final class LunarCalendar {
      */
     @SuppressLint("UseSparseArrays")
     private static final Map<Integer, String[]> SOLAR_TERMS = new HashMap<>();
-
-    /**
-     * 返回传统农历节日
-     *
-     * @param year  农历年
-     * @param month 农历月
-     * @param day   农历日
-     * @return 返回传统农历节日
-     */
-    private static String getTraditionFestival(int year, int month, int day) {
-        if (month == 12) {
-            int count = daysInLunarMonth(year, month);
-            if (day == count) {
-                return TRADITION_FESTIVAL_STR[0];//除夕
-            }
-        }
-        String text = getString(month, day);
-        String festivalStr = "";
-        for (String festival : TRADITION_FESTIVAL_STR) {
-            if (festival.contains(text)) {
-                festivalStr = festival.replace(text, "");
-                break;
-            }
-        }
-        return festivalStr;
-    }
 
 
     /**
@@ -250,73 +206,6 @@ final class LunarCalendar {
         return LunarCalendar.numToChinese(lunar[1], lunar[2], lunar[3]);
     }
 
-
-    /**
-     * 获取特殊计算方式的节日
-     * 如：每年五月的第二个星期日为母亲节，六月的第三个星期日为父亲节
-     * 每年11月第四个星期四定为"感恩节"
-     *
-     * @param year  year
-     * @param month month
-     * @param day   day
-     * @return 获取西方节日
-     */
-    private static String getSpecialFestival(int year, int month, int day) {
-        if (!SPECIAL_FESTIVAL.containsKey(year)) {
-            SPECIAL_FESTIVAL.put(year, getSpecialFestivals(year));
-        }
-        String[] specialFestivals = SPECIAL_FESTIVAL.get(year);
-        String text = String.format("%s%s", year, getString(month, day));
-        String solar = "";
-        for (String special : specialFestivals) {
-            if (special.contains(text)) {
-                solar = special.replace(text, "");
-                break;
-            }
-        }
-        return solar;
-    }
-
-
-    /**
-     * 获取每年的母亲节和父亲节和感恩节
-     * 特殊计算方式的节日
-     *
-     * @param year 年
-     * @return 获取每年的母亲节和父亲节、感恩节
-     */
-    private static String[] getSpecialFestivals(int year) {
-        String[] festivals = new String[3];
-        java.util.Calendar date = java.util.Calendar.getInstance();
-        date.set(year, 4, 1);
-        int week = date.get(java.util.Calendar.DAY_OF_WEEK);
-        int startDiff = 7 - week + 1;
-        if (startDiff == 7) {
-            festivals[0] = dateToString(year, 5, startDiff + 1) + SPECIAL_FESTIVAL_STR[0];
-        } else {
-            festivals[0] = dateToString(year, 5, startDiff + 7 + 1) + SPECIAL_FESTIVAL_STR[0];
-        }
-        date.set(year, 5, 1);
-        week = date.get(java.util.Calendar.DAY_OF_WEEK);
-        startDiff = 7 - week + 1;
-        if (startDiff == 7) {
-            festivals[1] = dateToString(year, 6, startDiff + 7 + 1) + SPECIAL_FESTIVAL_STR[1];
-        } else {
-            festivals[1] = dateToString(year, 6, startDiff + 7 + 7 + 1) + SPECIAL_FESTIVAL_STR[1];
-        }
-
-        date.set(year, 10, 1);
-        week = date.get(java.util.Calendar.DAY_OF_WEEK);
-        startDiff = 7 - week + 1;
-        if (startDiff <= 2) {
-            festivals[2] = dateToString(year, 11, startDiff + 21 + 5) + SPECIAL_FESTIVAL_STR[2];
-        } else {
-            festivals[2] = dateToString(year, 11, startDiff + 14 + 5) + SPECIAL_FESTIVAL_STR[2];
-        }
-        return festivals;
-    }
-
-
     private static String dateToString(int year, int month, int day) {
         return String.format("%s%s", year, getString(month, day));
     }
@@ -345,27 +234,12 @@ final class LunarCalendar {
             lunarCalendar.setLeapMonth(lunar[1]);
         }
         String solarTerm = LunarCalendar.getSolarTerm(year, month, day);
-//        String gregorian = LunarCalendar.gregorianFestival(month, day);
-        String festival = getTraditionFestival(lunar[0], lunar[1], lunar[2]);
-//        if (TextUtils.isEmpty(gregorian)) {
-//            gregorian = getSpecialFestival(year, month, day);
-//        }
         calendar.setSolarTerm(solarTerm);
-//        calendar.setGregorianFestival(gregorian);
-        calendar.setTraditionFestival(festival);
-        lunarCalendar.setTraditionFestival(festival);
         lunarCalendar.setSolarTerm(solarTerm);
         if (!TextUtils.isEmpty(solarTerm)) {
             calendar.setLunar(solarTerm);
         }
-//        else if (!TextUtils.isEmpty(gregorian)) {
-//            calendar.setLunar(gregorian);
-//        }
-        else if (!TextUtils.isEmpty(festival)) {
-            calendar.setLunar(festival);
-        } else {
-            calendar.setLunar(LunarCalendar.numToChinese(lunar[1], lunar[2], lunar[3]));
-        }
+        calendar.setLunar(LunarCalendar.numToChinese(lunar[1], lunar[2], lunar[3]));
         lunarCalendar.setLunar(calendar.getLunar());
     }
 
