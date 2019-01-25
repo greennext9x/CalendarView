@@ -19,6 +19,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.TextUtils;
 
+import duc.cal.CalConverter;
+import duc.cal.CalConverterVN;
+import duc.cal.CalUtil;
+import duc.cal.LunarDate;
+import duc.cal.LunarYear;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -199,11 +204,13 @@ final class LunarCalendar {
 //            return solar;
         if (!TextUtils.isEmpty(termText))
             return termText;
-        int[] lunar = LunarUtil.solarToLunar(year, month, day);
+        CalConverterVN calConverterVN = new CalConverterVN();
+        LunarDate lunar = calConverterVN.computeLunarDate(day,month,year);
+//        int[] lunar = LunarUtil.solarToLunar(year, month, day);
 //        String festival = getTraditionFestival(lunar[0], lunar[1], lunar[2]);
 //        if (!TextUtils.isEmpty(festival))
 //            return festival;
-        return LunarCalendar.numToChinese(lunar[1], lunar[2], lunar[3]);
+        return LunarCalendar.numToChinese(lunar.getMonth(), lunar.getDay(), lunar.getYear());
     }
 
     private static String dateToString(int year, int month, int day) {
@@ -224,14 +231,16 @@ final class LunarCalendar {
 
         Calendar lunarCalendar = new Calendar();
         calendar.setLunarCalendar(lunarCalendar);
-        int[] lunar = LunarUtil.solarToLunar(year, month, day);
-        lunarCalendar.setYear(lunar[0]);
-        lunarCalendar.setMonth(lunar[1]);
-        lunarCalendar.setDay(lunar[2]);
+//        int[] lunar = LunarUtil.solarToLunar(year, month, day);
+        CalConverterVN calConverterVN = new CalConverterVN();
+        LunarDate lunar = calConverterVN.computeLunarDate(day,month,year);
+        lunarCalendar.setYear(lunar.getYear());
+        lunarCalendar.setMonth(lunar.getMonth());
+        lunarCalendar.setDay(lunar.getDay());
         calendar.setLeapYear(CalendarUtil.isLeapYear(year));
-        if (lunar[3] == 1) {//如果是闰月
-            calendar.setLeapMonth(lunar[1]);
-            lunarCalendar.setLeapMonth(lunar[1]);
+        if (lunar.isLeap()) {//如果是闰月
+            calendar.setLeapMonth(lunar.getMonth());
+            lunarCalendar.setLeapMonth(lunar.getMonth());
         }
         String solarTerm = LunarCalendar.getSolarTerm(year, month, day);
         calendar.setSolarTerm(solarTerm);
@@ -239,7 +248,7 @@ final class LunarCalendar {
         if (!TextUtils.isEmpty(solarTerm)) {
             calendar.setLunar(solarTerm);
         }
-        calendar.setLunar(LunarCalendar.numToChinese(lunar[1], lunar[2], lunar[3]));
+        calendar.setLunar(LunarCalendar.numToChinese(lunar.getMonth(), lunar.getDay(), lunar.getYear()));
         lunarCalendar.setLunar(calendar.getLunar());
     }
 
